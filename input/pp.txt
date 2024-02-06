@@ -1,0 +1,9 @@
+Paranchych Mykhailo, 01/01/2022, 5757, Kosiv, Programming
+Ivanenko Olga, 15/03/2021, 4300, Kyiv, Graphic Design
+Petrov Sergiy, 05/06/2022, 6789, Lviv, Construction Services
+Kovalenko Maria, 20/09/2020, 3200, Kharkiv, Marketing
+Tkachenko Oleksandr, 10/12/2023, 5100, Dnipro, Consulting
+Melnychuk Olena, 03/04/2022, 6000, Zaporizhzhia, Catering
+Shevchenko Yuriy, 28/07/2021, 4500, Odesa, Tourism
+Zaytsev Ivan, 14/11/2023, 5900, Vinnytsia, IT Services
+Skutar Ihor, 02/02/2022, 999999, Chernivtsi, PHP
