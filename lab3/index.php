@@ -174,6 +174,7 @@ echo '<br>';
 echo 'Посортовані дані';
 print_array($privateEntreprenueurs);
 
+echo count($privateEntreprenueurs);
 
 ?>
 
