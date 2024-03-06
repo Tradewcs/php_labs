@@ -156,7 +156,7 @@ function main() {
 
     if (array_key_exists('getPEButton', $_POST)) {
         echo "<br> <br>";
-        $res = getPrivateEntrepreneursThatInclude($privateEnterpreneurs, "c");
+        $res = getPrivateEntrepreneursThatInclude($privateEnterpreneurs, $symbols);
         echo privateEnterpreneursToTable($res);
     }
 }

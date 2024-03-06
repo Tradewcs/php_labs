@@ -18,5 +18,5 @@
 
 <script>
     // history.pushState({}, '', 'index.php');
-    window.location = 'http://localhost/php/lab2/index.php';
+    window.location = '../lab2/index.php';
 </script>
