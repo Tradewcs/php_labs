@@ -9,6 +9,3 @@ Zaytsev Ivan, 14/11/2023, 5900, Vinnytsia, IT Services
 Skutar Ihor, 02/02/2022, 999999, Chernivtsi, PHP
 Bihun Yaroslav, 18/02/2024, 1000000, Chernivtsi, CHNU zav kafedry
 Bihun Yaroslav, 18/02/2024, 1000000, Chernivtsi, CHNU zav kafedry
-Y, 1/1/2022, 234, lkj, lol
-Y, 1/1/2022, 234, lkj, lol
-F, fsd, 333, lkj, m,n
