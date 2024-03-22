@@ -46,33 +46,42 @@ function load_file_info() {
 }
 
 function create_tables($conn) {
-    $sql = "
+    $sql_users = "
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    address VARCHAR(50) NOT NULL
+    tax INT NOT NULL,
+    service_id INT,
 )
 ";
 
-
-    mysqli_query($conn, $sql);
-
-    $sql = "
-CREATE TABLE users_info (
-    id INT PRIMARY KEY,
-    registration_date DATE NOT NULL,
-    tax INT,
-    service_type VARCHAR(50) NOT NULL
+$sql_user_addresses = "
+CREATE TABLE user_addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    city_id INT NOT NULL,
+    address VARCHAR(30) NOT NULL,
 )
-";
-    mysqli_query($conn, $sql);
-}
+    ";
 
-function clear_tables($conn) {
-    $sql = "DELETE FROM users";
-    $conn->query($sql);
-    $sql = "DELETE FROM users_info";
-    $conn->query($sql);
+    $sql_cities = "
+CREATE TABLE cities (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(30) NOT NULL,
+)
+    ";
+
+    $sql_services = "
+CREATE TABLE services (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+)
+    ";
+
+    mysqli_query($conn, $sql_users);
+    mysqli_query($conn, $sql_user_addresses);
+    mysqli_query($conn, $sql_cities);
+    mysqli_query($conn, $sql_services);
 }
 
 function add_data($conn, $data) {

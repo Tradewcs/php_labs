@@ -30,10 +30,11 @@ if (mysqli_connect_errno()) {
 
 
 $sql = "
-SELECT *
+SELECT users.name AS user_name, cities.name AS city_name, services.name AS service_name
 FROM users
-JOIN users_info
-ON users.id = users_info.id
+INNER JOIN user_addresses ON users.id = user_addresses.user_id
+INNER JOIN cities ON user_addresses.city_id = cities.id
+LEFT JOIN services ON users.service_id = services.id;
 ";
 // $sql = "
 // SELECT *
