@@ -16,7 +16,7 @@
 <?php
 require __DIR__ . '/func.php';
 require __DIR__ . '/../config.php';
-
+require __DIR__ . '/privateEnterpreneur.php';
 
 
 $conn = mysqli_connect($servername, $username, $password, $database);
@@ -40,14 +40,16 @@ if (mysqli_connect_errno()) {
 
 
 $sql = "
-SELECT users.name AS user_name, cities.name AS city_name, services.name AS service_name, users.tax as user_tax
+SELECT users.name AS user_name, cities.name AS city_name, services.name AS service_name, users.tax as user_tax, users.registration_date AS user_date, user_addresses.address AS address
 FROM users
 INNER JOIN user_addresses ON users.id = user_addresses.user_id
 INNER JOIN cities ON user_addresses.city_id = cities.id
-LEFT JOIN services ON users.service_id = services.id;
+LEFT JOIN services ON users.service_id = services.id
+ORDER BY user_tax;
 ";
 
 $res = $conn->query($sql);
+$res = arrayToPrivateEntrepreneur($res);
 // var_dump($res->fetch_assoc());
 print_table($res);
 
@@ -78,6 +80,8 @@ print_table($res);
     <br>    <br>
     <input type="text" name="address" placeholder="Адреса">
     <br>    <br>
+    <input type="date" name="registration_date">
+    <br>    <br>
     <?php
         $services = get_services($conn);
         echo generate_dropdown_services($services, 'IT');
@@ -92,11 +96,11 @@ print_table($res);
 <br>
 <br>
 
-<form method="post">
+<!-- <form method="post">
     <input type="text" name="symbols">
     <input type="submit" name="getPEButton" value="Отримати ПП" style="width: 100px;">
 
-</form>
+</form> -->
 
 <br>
 <br>
@@ -117,6 +121,7 @@ SELECT
     cities.name AS city_name, 
     services.name AS service_name, 
     users.tax AS user_tax
+    user_addresses.address AS address
 FROM 
     users
 INNER JOIN 
@@ -135,8 +140,45 @@ WHERE
 }
 
 
+
+
+
 ?>
+
 <br>
 <br>
+
+<form method="post">
+<select name="attribute">
+    <option value="fullName">fullName</option>
+    <option value="city">city</option>
+    <option value="serviceArea">serviceArea</option>
+    <option value="taxAmount">taxAmount</option>
+    <option value="address">address</option>
+    <option value="registration_date">registration_date</option>
+</select>
+<br>
+<br>
+<input type="text" name="value" placeholder="значення">
+<br>
+<br>
+
+<input type="submit" name="getPE" value="Отримати ПП">
+</form>
+
+<br>
+<br>
+
+<?php
+
+if (array_key_exists('getPE', $_POST)) {
+    $attribute = $_POST['attribute'];
+    $value = $_POST['value'];
+
+
+    print_table(PrivateEntrepreneur::getByAttribute($conn, $attribute, $value));
+}
+
+?>
 
 </body>

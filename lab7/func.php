@@ -1,45 +1,5 @@
 <?php
-function print_table($data) {
-    $htmlTable = "<table border='1'>
-                <tr>
-                    <th>Прізвище та Ім'я</th>
-                    <th>Адреса</th>
-                    <th>Розмір податку</th>
-                    <th>Сфера надання послуг</th>
-                </tr>";
 
-
-    while ($row = $data->fetch_assoc()) {
-        $htmlTable .= "<tr>
-                    <td>{$row["user_name"]}</td>
-                    <td>{$row["city_name"]}</td>
-                    <td>{$row["user_tax"]}</td>
-                    <td>{$row["service_name"]}</td>
-                </tr>";
-    }
-
-    $htmlTable .= "</table>";
-
-    echo $htmlTable;
-}
-
-function load_file_info() {
-    $filename = '../input/pp.txt';
-
-    if (file_exists($filename)) {
-        $fileContent = file($filename);
-
-        $data = [];
-        foreach ($fileContent as $line) {
-            $values = explode(", ", $line);
-            $data[] = $values;
-        }
-    } else {
-        echo '<p> Файл не знайдено </p>';
-    }
-
-    return $data;
-}
 
 function fill_cities($conn) {
     $regional_centers = [
@@ -106,6 +66,50 @@ function create_tables($conn) {
     mysqli_query($conn, $sql_services);
 }
 
+function arrayToPrivateEntrepreneur($data) {
+    $privateEntrepreneurs = [];
+    while ($pe = $data->fetch_assoc()) {
+        $privateEntrepreneurs[] = new PrivateEntrepreneur(
+            $pe['user_name'],
+            $pe['user_tax'],
+            $pe['address'],
+            $pe['city_name'],
+            $pe['service_name'],
+            $pe['user_date']
+        );
+    }
+        
+    return $privateEntrepreneurs;
+}
+
+function print_table($entrepreneurs) {
+    $htmlTable = "<table border='1'>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Tax Amount</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Registration date</th>
+                    <th>Service Area</th>
+                </tr>";
+
+    foreach ($entrepreneurs as $pe) {
+        $htmlTable .= "<tr>
+                    <td>{$pe->getFullName()}</td>
+                    <td>{$pe->getTaxAmount()}</td>
+                    <td>{$pe->getAddress()}</td>
+                    <td>{$pe->getCity()}</td>
+                    <td>{$pe->getRegistrationDate()}</td>
+                    <td>{$pe->getServiceArea()}</td>
+                </tr>";
+    }
+
+    $htmlTable .= "</table>";
+
+    echo $htmlTable;
+}
+
+
 function get_service_id($conn, $service_name) {
     $sql = "SELECT id FROM services WHERE name = \"$service_name\"";
     $res = $conn->query($sql);
@@ -117,20 +121,6 @@ function get_city_id($conn, $city_name) {
     $res = $conn->query($sql);
     var_dump($res);
     return $res->fetch_assoc()['id'];
-}
-
-function insert_data($conn, $data) {
-    foreach ($data as $row) {
-        $date = DateTime::createFromFormat('d/m/Y', $row[1]);
-        
-        $sql1 = "INSERT INTO users (name, address) VALUES ('" . $row[0] . "', '" . $row[3] . "')";
-        $conn->query($sql1);
-
-        $last_id = $conn->insert_id;
-        $sql2 = "INSERT INTO users_info (id, registration_date, tax, service_type) VALUES ('" . $last_id . "', '" . $date->format('Y-m-d') . "', '" . $row[2] .  "', '" . $row[4] . "')";
-        $conn->query($sql2);
-
-    }
 }
 
 function get_services($conn) {
@@ -178,6 +168,37 @@ function generate_dropdown_cities($options, $selected = null) {
     }
     $html .= '</select>';
     return $html;
+}
+
+function writePEToDatabase($conn, $pe) {
+    $sql_users = "INSERT INTO users (name, tax, registration_date, service_id) VALUES ('" . $pe->getFullName() . "', '" . $pe->getTaxAmount() . "', '" . $pe->getRegistrationDate() . "', '" . get_service_id($conn, $pe->getServiceArea()) . "')";
+    $conn->query($sql_users);
+
+    $last_id = $conn->insert_id;
+    $sql_address = "INSERT INTO user_addresses (user_id, city_id, address) VALUES ('" . $last_id . "', '" . get_city_id($conn, $pe->getCity()) . "', '" . $pe->getAddress() . "')";
+    $conn->query($sql_address);
+
+}
+
+function getPEByRegistrationDate($conn, $date) {
+    $sql = "
+SELECT
+    users.name AS user_name, 
+    cities.name AS city_name, 
+    services.name AS service_name, 
+    users.tax AS user_tax
+    user_addresses.address AS address
+FROM 
+    users
+INNER JOIN 
+    user_addresses ON users.id = user_addresses.user_id
+INNER JOIN 
+    cities ON user_addresses.city_id = cities.id
+LEFT JOIN 
+    services ON users.service_id = services.id
+WHERE 
+    users.registration_date LIKE '$date';
+    ";
 }
 
 ?>
